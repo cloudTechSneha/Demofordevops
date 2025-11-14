@@ -1,0 +1,24 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, labeled]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Check JIRA ID in PR description
+        run: bash .github/scripts/check_pr_description.sh
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+
+      - name: Validate labels
+        run: bash .github/scripts/validate_labels.sh
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
