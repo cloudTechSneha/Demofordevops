@@ -1,0 +1,22 @@
+name: Handle PR Conversations
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+
+jobs:
+  handle-conversations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: python3 -m pip install --upgrade pip requests
+
+      - name: Handle conversation based on test result
+        run: python3 .github/scripts/handle_conversations.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
